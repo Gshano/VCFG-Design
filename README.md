@@ -54,7 +54,4 @@ Switch S1 swaps timing-network components (R/C) to toggle between the two operat
 - The converter ensures that Vc (0–5 V) maps linearly to ±control levels feeding the integrator, maintaining consistent waveform symmetry.  
 - Switching network (S1) changes RC time constants for dual-range operation.
 
----
-
-## 📁 Repository Layout
 
