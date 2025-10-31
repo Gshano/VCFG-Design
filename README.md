@@ -1,52 +1,60 @@
 # Voltage-Controlled Function Generator (VCFG)
 
-This project implements a **Voltage-Controlled Function Generator (VCFG)** that produces both **square** and **triangular** waveforms using op-amp-based integrator and Schmitt trigger stages.  
-The design achieves two selectable frequency ranges — **20 Hz – 700 Hz** and **100 Hz – 3.5 kHz** — controlled by an analog input voltage from **0 V – 8 V**.
+A voltage-controlled function generator producing **square** and **triangular** waveforms using a closed-loop op-amp system.  
+The circuit uses a **Schmitt trigger → digital switch → DC-to-±DC converter → integrator** loop.  
+Output frequency varies **linearly with control voltage (Vc = 0–5 V)**, and the circuit offers **two selectable ranges** via a switch.  
+Both waveforms pass through a **user-adjustable gain stage** (0–8 Vpp).
 
 ---
 
 ## ⚙️ Overview
 
-- **Architecture:** Integrator + Schmitt trigger + DC converter  
-- **Core Device:** LM318N high-speed operational amplifiers  
+- **Control Voltage:** 0–5 V → linear frequency control  
+- **Frequency Ranges:**  
+  - Range A: 20 Hz – 700 Hz  
+  - Range B: 100 Hz – 3.5 kHz  
+- **Outputs:** Square + Triangular, each 0–8 Vpp (adjustable)  
+- **Op-amps:** LM318N (high-slew, low-distortion)  
+- **Power Supply:** ±12 V  
 - **Simulation Tool:** NI MultiSIM  
-- **Purpose:** Generate frequency-adjustable waveforms with stable amplitude and low distortion for lab signal testing and system control applications.
 
 ---
 
-## 🧩 System Description
+## 🔁 System Operation
 
-| Module | Function |
-|---------|-----------|
-| **Integrator** | Converts the square output into a triangular waveform; slope determined by control voltage. |
-| **Schmitt Trigger** | Compares the triangular signal against thresholds to produce a clean square output. |
-| **DC Converter / Control Stage** | Adjusts biasing to map control voltage (Vc = 0–8 V) to output frequency range. |
+| Stage | Description |
+|--------|--------------|
+| **1. Schmitt Trigger** | Generates a stable digital square output that drives the digital switch. |
+| **2. Digital Switch** | Directs control logic to the DC-converter based on the Schmitt output. |
+| **3. DC → ±DC Converter** | Converts 0–5 V control signal (Vc) into a bipolar control that biases the integrator. This sets the slope → frequency. |
+| **4. Integrator** | Integrates the DC-converted signal to create a linear triangular waveform. Output feeds back to the Schmitt to close the loop. |
+| **5. Gain Stage** | Independent user-controlled amplifier adjusts both square and triangular outputs between 0–8 Vpp. |
 
-The two ranges are selected by modifying timing-network resistors (R, C) in the integrator stage.
+The circuit’s **frequency response** depends on the converter output magnitude; increasing Vc increases the integrator’s slope → higher frequency.  
+Switch S1 swaps timing-network components (R/C) to toggle between the two operating ranges.
 
 ---
 
-## 📊 Performance Summary
+## 📊 Performance
 
-| Parameter | Range 1 | Range 2 |
+| Parameter | Range A | Range B |
 |------------|----------|----------|
-| Frequency Range | 20 Hz – 700 Hz | 100 Hz – 3.5 kHz |
-| Control Voltage | 0 V – 8 V | 0 V – 8 V |
-| Waveform Error | ±2 % (after trimming) | ±2 % (after trimming) |
-| Supply Voltage | ±15 V | ±15 V |
-| Output Types | Square & Triangular | Square & Triangular |
+| Frequency | 20 – 700 Hz | 100 – 3.5 kHz |
+| Control Voltage | 0 – 5 V | 0 – 5 V |
+| Output Voltage | 0 – 8 Vpp (user adjustable) | 0 – 8 Vpp (user adjustable) |
+| Waveforms | Square + Triangular | Square + Triangular |
+| Power | ±12 V | ±12 V |
 
 ---
 
 ## 🧠 Design Notes
-
-- Frequency determined by \( f = \frac{V_c}{4 R C V_T} \) relationship (approximation derived from the integrator’s slope).  
-- Schmitt trigger thresholds set to maintain constant waveform amplitude independent of frequency.  
-- LM318 chosen for its **high slew rate (~70 V/µs)** and **wide bandwidth**, minimizing distortion at higher frequencies.  
-- Design validated in MultiSIM with time-domain plots and FFT analysis for harmonic content.
+- **LM318N** chosen for its **70 V/µs** slew rate, ensuring waveform linearity at high frequency.  
+- **2N3904** + **1N4148** provide current steering for the DC-converter section.  
+- **1N5339B Zeners** clamp reference levels for the Schmitt trigger thresholds.  
+- The converter ensures that Vc (0–5 V) maps linearly to ±control levels feeding the integrator, maintaining consistent waveform symmetry.  
+- Switching network (S1) changes RC time constants for dual-range operation.
 
 ---
 
-## 🧰 Files Included
-
+## 📁 Repository Layout
 
